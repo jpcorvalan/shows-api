@@ -1,3 +1,3 @@
 class ShowSerializer < ActiveModel::Serializer
-  attributes :id, :image, :title, :rating
+  attributes :id, :image, :title, :rating, :characters
 end
