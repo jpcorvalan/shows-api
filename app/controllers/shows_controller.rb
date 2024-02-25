@@ -5,7 +5,7 @@ class ShowsController < ApplicationController
   def index
     @shows = Show.all
 
-    render json: @shows
+    render json: @shows, each_serializer: SimpleShowSerializer
   end
 
   # GET /shows/1
