@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+#      /path         controller#metodo
+  get '/health', to: 'health#health'
+
   resources :characters
   resources :shows
 
