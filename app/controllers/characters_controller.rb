@@ -1,6 +1,19 @@
 class CharactersController < ApplicationController
   before_action :set_character, only: %i[ show update destroy ]
 
+  rescue_from Exception do |e|
+    log.error "#{e.message}"
+    render json: {error: e.message}, status: :internal_error
+  end
+
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    render json: {error: e.message}, status: :unprocessable_entity
+  end
+
+  rescue_from ActionController::ParameterMissing do |e|
+    render json: {error: e.message}, status: :bad_request
+  end
+
   # GET /characters
   def index
     @characters = Character.all
@@ -20,7 +33,7 @@ class CharactersController < ApplicationController
     if @character.save
       render json: @character, status: :created, location: @character
     else
-      render json: @character.errors, status: :unprocessable_entity
+      render json: {error: @character.errors}, status: :unprocessable_entity
     end
   end
 
@@ -29,7 +42,7 @@ class CharactersController < ApplicationController
     if @character.update(character_params)
       render json: @character
     else
-      render json: @character.errors, status: :unprocessable_entity
+      render json: {error: @character.errors}, status: :unprocessable_entity
     end
   end
 
