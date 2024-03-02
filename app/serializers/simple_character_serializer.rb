@@ -1,3 +1,3 @@
 class SimpleCharacterSerializer < ActiveModel::Serializer
-  attributes :image, :name
+  attributes :id, :image, :name
 end
