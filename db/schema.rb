@@ -10,34 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_27_012959) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_01_104159) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "characters", force: :cascade do |t|
+  create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "image"
     t.string "name"
     t.integer "age"
     t.string "weight"
     t.text "history"
-    t.datetime "created_at", precision: nil, default: -> { "now()" }
-    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
   create_table "characters_shows", id: false, force: :cascade do |t|
-    t.bigint "show_id", null: false
-    t.bigint "character_id", null: false
+    t.uuid "character_id", null: false
+    t.uuid "show_id", null: false
+    t.index ["character_id", "show_id"], name: "index_characters_shows_on_character_id_and_show_id"
   end
 
-  create_table "shows", force: :cascade do |t|
+  create_table "shows", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "image"
     t.string "title"
     t.integer "rating", limit: 2
-    t.datetime "created_at", precision: nil, default: -> { "now()" }
-    t.datetime "updated_at", precision: nil, default: -> { "now()" }
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
