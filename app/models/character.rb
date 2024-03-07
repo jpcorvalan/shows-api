@@ -6,4 +6,10 @@ class Character < ApplicationRecord
   validates :image, presence: true
   validates :name, presence: true
   validates :weight, presence: true
+
+  scope :find_by_name, -> (params) {
+    # character = all
+    where("name ILIKE ?", "%#{params[:name]}%")
+  }
+
 end

@@ -2,8 +2,8 @@ class CharactersController < ApplicationController
   before_action :set_character, only: %i[ show update destroy ]
 
   rescue_from Exception do |e|
-    log.error "#{e.message}"
-    render json: {error: e.message}, status: :internal_error
+    # log.error "#{e.message}"
+    render json: {error: e.message}, status: 500
   end
 
   rescue_from ActiveRecord::RecordInvalid do |e|
@@ -14,9 +14,18 @@ class CharactersController < ApplicationController
     render json: {error: e.message}, status: :bad_request
   end
 
+
+  # # GET /characters
+  # def index
+  #   @characters = Character.all
+
+  #   render json: @characters, each_serializer: SimpleCharacterSerializer
+  # end
+
+
   # GET /characters
   def index
-    @characters = Character.all
+    @characters = CharacterFinder.new(search_params).call
 
     render json: @characters, each_serializer: SimpleCharacterSerializer
   end
@@ -25,6 +34,11 @@ class CharactersController < ApplicationController
   def show
     render json: @character, serializer: CharacterSerializer
   end
+
+  # def find_by_name
+  #   @character = Character.find_by_name(params[:name])
+  #   render json: @character, serializer: CharacterSerializer
+  # end
 
   # POST /characters
   def create
@@ -60,5 +74,13 @@ class CharactersController < ApplicationController
     # Only allow a list of trusted parameters through.
     def character_params
       params.require(:character).permit(:image, :name, :age, :weight, :history)
+    end
+
+    def permitted_params
+      params.permit(:name)
+    end
+
+    def search_params
+      permitted_params
     end
 end
